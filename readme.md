@@ -97,6 +97,7 @@ pip install cryptography keyring python-dotenv
 
 ```
 
+
 SERVICE_NAME and USERNAME are used as keys for password storage in the keyring.
 ENCRYPTED_FOLDER is where encrypted files are stored.
 ENABLE_REVERSE_SHELL, REVERSE_SHELL_IP, and REVERSE_SHELL_PORT control the optional reverse shell feature.
@@ -113,6 +114,8 @@ decrypted_path = castle_pig.file_decrypter.decrypt_file("EncryptedFiles/example1
 print(f"Decrypted file at: {decrypted_path}")
 ```
 
+---
+
 ## FAQ
 Q: What happens if I lose my password or keyring access?
 A: You will not be able to decrypt your files. Always ensure you have a backup or access to your keyring.
@@ -123,7 +126,12 @@ A: The reverse shell is for educational and authorized penetration testing only.
 Q: Can I use this on Linux or macOS?
 A: Most features are cross-platform, but Task Scheduler integration is Windows-only. The rest of the suite should work on any OS with Python 3.7+.
 
+---
 
-License
+## License
 This project is for educational purposes.
 Use at your own risk.
+
+---
+
+Credits: RedCooler
