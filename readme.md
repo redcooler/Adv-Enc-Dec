@@ -102,17 +102,39 @@ SERVICE_NAME and USERNAME are used as keys for password storage in the keyring.
 ENCRYPTED_FOLDER is where encrypted files are stored.
 ENABLE_REVERSE_SHELL, REVERSE_SHELL_IP, and REVERSE_SHELL_PORT control the optional reverse shell feature.
 
+## How to Decrypt a File
+
+To decrypt an encrypted file (for example, `EncryptedFiles/example1.txt.encrypted`), use the following steps:
+
+### 1. Retrieve the Password from the Keyring
+
 ```python
 import castle_pig.keyring_password
-import castle_pig.file_decrypter
+
+SERVICE_NAME = "CastlePig"
+USERNAME = "one_dumb_pig"
 
 password = castle_pig.keyring_password.load_password_from_keyring(
-    service_name="CastlePig",
-    username="one_dumb_pig"
+    service_name=SERVICE_NAME,
+    username=USERNAME
 )
-decrypted_path = castle_pig.file_decrypter.decrypt_file("EncryptedFiles/example1.txt.encrypted", password)
-print(f"Decrypted file at: {decrypted_path}")
 ```
+
+
+Decrypt the file
+```python
+import castle_pig.file_decrypter
+
+ENCRYPTED_FILE = "EncryptedFiles/example1.txt.encrypted"
+
+decrypted_path = castle_pig.file_decrypter.decrypt_file(ENCRYPTED_FILE, password)
+
+if decrypted_path:
+    print(f"Decrypted file at: {decrypted_path}")
+else:
+    print("Decryption failed.")
+```
+
 
 ---
 
