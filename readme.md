@@ -134,4 +134,5 @@ Use at your own risk.
 
 ---
 
-Credits: RedCooler
+## Credits:
+    RedCooler
