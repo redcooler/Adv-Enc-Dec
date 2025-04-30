@@ -117,14 +117,25 @@ print(f"Decrypted file at: {decrypted_path}")
 ---
 
 ## FAQ
-Q: What happens if I lose my password or keyring access?
+
+**Q: What happens if I lose my password or keyring access?**  
 A: You will not be able to decrypt your files. Always ensure you have a backup or access to your keyring.
-Q: Can I use this on folders other than Desktop?
-A: Yes! Modify the desktop_files.py or main script to target any directory you wish.
-Q: Is the reverse shell safe?
+
+---
+
+**Q: Can I use this on folders other than Desktop?**  
+A: Yes! Modify the `desktop_files.py` or main script to target any directory you wish.
+
+---
+
+**Q: Is the reverse shell safe?**  
 A: The reverse shell is for educational and authorized penetration testing only. Never use it without explicit permission.
-Q: Can I use this on Linux or macOS?
+
+---
+
+**Q: Can I use this on Linux or macOS?**  
 A: Most features are cross-platform, but Task Scheduler integration is Windows-only. The rest of the suite should work on any OS with Python 3.7+.
+
 
 ---
 
