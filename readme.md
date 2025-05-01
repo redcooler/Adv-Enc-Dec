@@ -7,20 +7,20 @@ It leverages industry-standard cryptography, secure password management, and aut
 
 ## Table of Contents
 
-- Features
-- How It Works
-- Project Structure
-- Requirements
-- Installation
-- Configuration
-- Usage
-- How to Decrypt a File
-- Module Descriptions
-- Security Model
-- Best Practices
-- FAQ
-- License
-- Credits
+- [Features](#features)
+- [How It Works](#how-it-works)
+- [Project Structure](#project-structure)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [How to Decrypt a File](#how-to-decrypt-a-file)
+- [Module Descriptions](#module-descriptions)
+- [Security Model](#security-model)
+- [Best Practices](#best-practices)
+- [FAQ](#faq)
+- [License](#license)
+- [Credits](#credits)
 
 ---
 
@@ -81,24 +81,28 @@ All cryptographic operations are performed using the [cryptography](https://cryp
 - [python-dotenv](https://pypi.org/project/python-dotenv/) (optional, for .env config)
 
 Install dependencies with:
-    pip install cryptography keyring python-dotenv
+```sh
+pip install cryptography keyring python-dotenv
+```
+
 
 ---
 
 ## Installation
 
-    git clone https://github.com/redcooler/Adv-Enc-Dec.git
-    cd Adv-Enc-Dec
-    pip install cryptography keyring python-dotenv
+git clone https://github.com/redcooler/Adv-Enc-Dec.git
+cd Adv-Enc-Dec
+pip install cryptography keyring python-dotenv
 
+```text
 (Optional) Create a `.env` file in the project root for configuration:
-
     SERVICE_NAME=CastlePig
     USERNAME=one_dumb_pig
     ENCRYPTED_FOLDER=EncryptedFiles
     ENABLE_REVERSE_SHELL=False
     REVERSE_SHELL_IP=127.0.0.1
     REVERSE_SHELL_PORT=4444
+```
 
 - `SERVICE_NAME` and `USERNAME` are used as keys for password storage in the keyring.
 - `ENCRYPTED_FOLDER` is where encrypted files are stored.
@@ -117,7 +121,9 @@ If a variable is not set, the script will use its default value.
 
 1. **Run the main script** (typically `castlepig.py`):
 
-        python castlepig.py
+    ```
+    python castlepig.py
+    ```
 
     - This will:
       - Generate a secure password and store it in the keyring (if not already present)
@@ -135,36 +141,38 @@ To decrypt an encrypted file (for example, `EncryptedFiles/example1.txt.encrypte
 
 ### 1. Retrieve the Password from the Keyring
 
-    import castle_pig.keyring_password
+```python
+import castle_pig.keyring_password
 
-    SERVICE_NAME = "CastlePig"
-    USERNAME = "one_dumb_pig"
+SERVICE_NAME = "CastlePig"
+USERNAME = "one_dumb_pig"
 
-    password = castle_pig.keyring_password.load_password_from_keyring(
-        service_name=SERVICE_NAME,
-        username=USERNAME
-    )
+password = castle_pig.keyring_password.load_password_from_keyring(
+    service_name=SERVICE_NAME,
+    username=USERNAME
+)
+```
 
-### 2. Decrypt the File
+### 2. Decrypt the file
 
-    import castle_pig.file_decrypter
+```python
+import castle_pig.file_decrypter
 
-    ENCRYPTED_FILE = "EncryptedFiles/example1.txt.encrypted"
+ENCRYPTED_FILE = "EncryptedFiles/example1.txt.encrypted"
 
-    decrypted_path = castle_pig.file_decrypter.decrypt_file(ENCRYPTED_FILE, password)
+decrypted_path = castle_pig.file_decrypter.decrypt_file(ENCRYPTED_FILE, password)
 
-    if decrypted_path:
-        print(f"Decrypted file at: {decrypted_path}")
-    else:
-        print("Decryption failed.")
+if decrypted_path:
+    print(f"Decrypted file at: {decrypted_path}")
+else:
+    print("Decryption failed.")
+```
 
 Alternatively, if your `file_decrypter.py` supports command-line usage:
-
-    python castle_pig/file_decrypter.py EncryptedFiles/example1.txt.encrypted --password "YOUR_PASSWORD"
-
-Replace `"YOUR_PASSWORD"` with the password you retrieved from the keyring.
-
----
+```python
+python castle_pig/file_decrypter.py EncryptedFiles/example1.txt.encrypted --password "YOUR_PASSWORD"
+```
+Replace "YOUR_PASSWORD" with the password you retrieved from the keyring.
 
 ## Module Descriptions
 
@@ -277,3 +285,4 @@ Use at your own risk.
 ---
 
 *CastlePig: Because your data deserves a fortress.*
+
